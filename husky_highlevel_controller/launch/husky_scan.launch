@@ -1,0 +1,33 @@
+<?xml version="1.0"?>
+<launch>
+   
+
+     <arg name="world_name" default="/usr/share/gazebo-7/worlds/robocup14_spl_field.world"/>   
+   <!--<arg name="world_name" default="$(find husky_highlevel_controller)/worlds/singlePillar.world"/>-->
+
+   <arg name="laser_enabled" default="true"/>
+   
+   
+
+   <include file="$(find gazebo_ros)/launch/empty_world.launch">
+    	<arg name="world_name" value="$(arg world_name)"/>
+	<arg name="paused" value="false"/>
+	<arg name="use_sim_time" value="true"/>
+	<arg name="gui" value="true"/>
+	<arg name="headless" value="false"/>
+	<arg name="debug" value="false"/>
+   </include>
+   <node name="teleop" pkg="teleop_twist_keyboard" type="teleop_twist_keyboard.py" output="screen" />
+
+   <node name="husky_highlevel_controller" pkg="husky_highlevel_controller" type="husky_scan.py" output="screen" launch-prefix="gnome-terminal --command" >
+   	<rosparam command="load" file="$(find husky_highlevel_controller)/config/config.yaml"/>
+   </node>
+
+   <include file="$(find husky_gazebo)/launch/spawn_husky.launch">
+   	<arg name="laser_enabled" value="$(arg laser_enabled)"/>
+  	
+   
+   </include>
+
+   <node name="rviz" pkg="rviz" type="rviz"/>
+</launch>
